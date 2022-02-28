@@ -16,9 +16,9 @@ interface Route {
 export class BaseApiController extends BaseResource {
 
   static INTERNAL_RESOURCE_TYPE: string = '@dyna:api-controller';
-  static INTERNAL_BASE_PATH?: string|null;
-  static INTERNAL_MATCH_ROUTES?: Route[];
-  static INTERNAL_CALLER?: string;
+  static INTERNAL_BASE_PATH?: string;
+  static INTERNAL_MATCH_ROUTES: Route[];
+  static INTERNAL_CALLER: string;
 
   static getActionByRequest(req: IncomingMessage): { action: string, match: { [key: string]: any } }|null {
     if (!req.url) {

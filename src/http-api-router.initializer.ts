@@ -10,8 +10,14 @@ import UrlPattern from 'url-pattern';
  */
 export class HttpApiRouterInitializer extends BaseInitializer {
 
+  /**
+   * After http server
+   */
   static INTERNAL_INITIALIZER_INDEX: number = CreateHttpServerInitializer.INTERNAL_INITIALIZER_INDEX + 1;
 
+  /**
+   * Controllers container
+   */
   private controllers: typeof BaseApiController[] = [];
 
   /**
@@ -23,6 +29,11 @@ export class HttpApiRouterInitializer extends BaseInitializer {
     }
 
     this.cacheControllers();
+    this.setApplicationToControllers();
+    this.fixControllersBasePath();
+    this.fixControllersRoutes();
+
+    this.controllers.forEach(controller => console.log('controller', controller.INTERNAL_MATCH_ROUTES));
   }
 
   /**
@@ -32,32 +43,45 @@ export class HttpApiRouterInitializer extends BaseInitializer {
     this.httpListener();
   }
 
+  setApplicationToControllers() {
+    this.controllers.forEach(controller => this.app && controller.prototype.setApplication(this.app));
+  }
+
+  fixControllersBasePath() {
+    this.controllers.forEach(controller => {
+      if (!this.app?.sourcePath) {
+        return;
+      }
+
+      const base = path.dirname(controller.INTERNAL_CALLER).replace(this.app?.sourcePath, '');
+
+      controller.INTERNAL_BASE_PATH = path.resolve(typeof controller.INTERNAL_BASE_PATH === 'undefined' ? base : controller.INTERNAL_BASE_PATH) ?? '/';
+    });
+  }
+
+  fixControllersRoutes() {
+    this.controllers.forEach(controller => {
+      controller.INTERNAL_MATCH_ROUTES?.map(route => {
+        route.method = route.method.toUpperCase();
+        route.path = path.resolve(`${controller.INTERNAL_BASE_PATH}/${route.path}`);
+        route.pattern = new UrlPattern(route.path);
+        return route;
+      });
+    });
+  }
+
   /**
    * Cache controllers
    */
   cacheControllers() {
     this.controllers = this.app?.resources.only<typeof BaseApiController>(BaseApiController.INTERNAL_RESOURCE_TYPE) || [];
-    this.controllers.forEach(controller => this.app && controller.prototype.setApplication(this.app));
-    this.controllers.forEach(controller => {
-      const base = path.dirname(controller.INTERNAL_CALLER||'').replace(this.app?.sourcePath||'', '');
-
-      controller.INTERNAL_BASE_PATH = typeof controller.INTERNAL_BASE_PATH === 'undefined' ? base : controller.INTERNAL_BASE_PATH;
-      controller.INTERNAL_MATCH_ROUTES?.map(route => {
-        route.method = route.method.toUpperCase();
-        route.path = path.resolve(`${base}/${route.path}`);
-        route.pattern = new UrlPattern(route.path);
-        return route;
-      });
-    });
-
-    this.controllers.forEach(controller => console.log('controller', controller.INTERNAL_MATCH_ROUTES));
   }
 
   /**
    * Listen http requests
    */
   httpListener() {
-    this.app?.ex.httpServer?.addListener('request', (req: IncomingMessage, res: ServerResponse) => {
+    this.app?.ex.httpServer?.addListener('request', async (req: IncomingMessage, res: ServerResponse) => {
       if (req.url === '/favicon.ico') {
         return res.end();
       }
@@ -69,7 +93,8 @@ export class HttpApiRouterInitializer extends BaseInitializer {
           continue;
         }
 
-        console.log('action', action);
+        const instance = new controller();
+        await ((instance as any)[action.action])();
       }
 
       res.write('hola!');
