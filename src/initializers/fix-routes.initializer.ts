@@ -5,6 +5,7 @@ import { BaseApiController } from './../api-controller/base.api-controller';
 import { CacheControllersInitializer } from './cache-controllers.initializer';
 import * as path from 'path';
 import { FixControllersInitializer } from './fix-controllers.initializer';
+import UrlPattern from 'url-pattern';
 
 /**
  * Fix routes
@@ -15,13 +16,16 @@ export class FixRoutesInitializer extends BaseInitializer {
 
   async register(): Promise<void> {
     CacheControllersInitializer.controllers.forEach(controller => {
-      if (!this.app?.sourcePath) {
-        return;
-      }
+      // Every route
+      controller.getRoutes().map(route => {
+        const controllerPath = controller.getControllerPath();
 
-      const pathFolder = urlResolve(path.dirname(controller.getControllerCaller()).replace(this.app?.sourcePath, ''));
-      const uri = typeof controller.getControllerPath() === 'undefined' ? pathFolder : controller.getControllerPath() ?? '/';
-      controller.setControllerPath(urlResolve(uri));
+        // Fix route values
+        route.method = (route.method ?? 'get').toUpperCase();
+        route.path = urlResolve(`${controllerPath}/${route.path}`);
+        route.pattern = new UrlPattern(route.path);
+        return route;
+      });
     });
   }
 
