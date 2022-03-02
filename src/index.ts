@@ -1,5 +1,5 @@
 export * from './dyna-framework';
-export * from './http-api-router.initializer';
+export * from './initializers/listen-http-requests.initializer';
 
 export * from './api-controller/base.api-controller';
 

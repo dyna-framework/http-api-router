@@ -1,13 +1,13 @@
 import { BaseResource } from '@dyna/core';
 import { IncomingMessage } from 'http';
-import * as path from 'path';
 import UrlPattern from 'url-pattern';
+import { urlResolve } from '../helpers';
 
 interface Route {
   method: string;
   action: string;
   path: string;
-  pattern: UrlPattern|null;
+  pattern?: UrlPattern;
 }
 
 /**
@@ -16,19 +16,19 @@ interface Route {
 export class BaseApiController extends BaseResource {
 
   static INTERNAL_RESOURCE_TYPE: string = '@dyna:api-controller';
-  static INTERNAL_BASE_PATH?: string;
-  static INTERNAL_MATCH_ROUTES: Route[];
-  static INTERNAL_CALLER: string;
+  private static INTERNAL_BASE_PATH: string;
+  private static INTERNAL_MATCH_ROUTES: Route[];
+  private static INTERNAL_CALLER: string;
 
-  static getActionByRequest(req: IncomingMessage): { action: string, match: { [key: string]: any } }|null {
-    if (!req.url) {
+  static getAction(method: string, url: string): string|null {
+    if (!url) {
       return null;
     }
 
-    const url = path.resolve(req.url);
+    url = urlResolve(url);
 
-    for (const route of this.INTERNAL_MATCH_ROUTES||[]) {
-      if (route.method.toUpperCase() !== req.method?.toUpperCase()) {
+    for (const route of this.getRoutes()) {
+      if (route.method.toUpperCase() !== method.toUpperCase()) {
         continue;
       }
 
@@ -38,10 +38,38 @@ export class BaseApiController extends BaseResource {
         continue;
       }
 
-      return { action: route.action, match };
+      return route.action;
     }
 
     return null;
+  }
+
+  static addRoute(route: Route) {
+    if (!(this.INTERNAL_MATCH_ROUTES instanceof Array)) {
+      this.INTERNAL_MATCH_ROUTES = [];
+    }
+
+    this.INTERNAL_MATCH_ROUTES.push(route);
+  }
+
+  static getRoutes(): Route[] {
+    return this.INTERNAL_MATCH_ROUTES || [];
+  }
+
+  static setControllerCaller(caller: string) {
+    this.INTERNAL_CALLER = caller;
+  }
+
+  static getControllerCaller(): string {
+    return this.INTERNAL_CALLER;
+  }
+
+  static setControllerPath(path: string) {
+    this.INTERNAL_BASE_PATH = path;
+  }
+
+  static getControllerPath(): string {
+    return this.INTERNAL_BASE_PATH;
   }
 
 }
