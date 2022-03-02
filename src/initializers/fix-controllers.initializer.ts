@@ -1,7 +1,5 @@
 import { BaseInitializer } from '@dyna/core';
-import { CreateHttpServerInitializer } from '@dyna/http-server';
 import { urlResolve } from '../helpers';
-import { BaseApiController } from './../api-controller/base.api-controller';
 import { CacheControllersInitializer } from './cache-controllers.initializer';
 import * as path from 'path';
 
