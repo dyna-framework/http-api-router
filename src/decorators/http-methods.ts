@@ -1,6 +1,8 @@
 import { BaseApiController } from "../api-controller/base.api-controller";
 
-// Methods
+/**
+ * Methods
+ */
 type AvailableMethods = 'GET'|'get'|'POST'|'post'|'PUT'|'put'|'PATCH'|'patch'|'DELETE'|'delete'|'ANY'|'any';
 
 /**
