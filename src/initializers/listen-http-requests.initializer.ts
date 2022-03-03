@@ -72,9 +72,10 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         throw new HttpError404()
       } catch (err) {
         // HTTP error
-        const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any);
+        const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any)
 
         // Show response error
+        console.error(error)
         return this.showResponse(req, res, new Response().status(error.statusCode).content(error.statusText))
       }
     })
