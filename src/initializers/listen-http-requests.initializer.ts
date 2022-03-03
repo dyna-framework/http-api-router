@@ -27,18 +27,23 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         return res.end();
       }
 
+      // All controllers
       for (const controller of CacheControllersInitializer.controllers) {
         const action = controller.getAction(req.method, req.url);
 
+        // No match
         if (!action) {
           continue;
         }
 
+        // Instance controller
         const instance = new controller();
         const method = (instance as any)[action];
 
+        // Execute action
         const result = await method();
 
+        // Show result
         res.write(result);
         res.end();
 
