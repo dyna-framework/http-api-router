@@ -32,7 +32,7 @@ export class BaseApiController extends BaseResource {
     // All controller routes
     for (const route of this.getRoutes()) {
       // Skip if different http method
-      if (route.method.toUpperCase() === 'ANY' && route.method.toUpperCase() !== method.toUpperCase()) {
+      if (route.method.toUpperCase() !== method.toUpperCase() && route.method.toUpperCase() !== 'ANY') {
         continue
       }
 

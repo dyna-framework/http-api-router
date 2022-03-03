@@ -2,6 +2,7 @@ import { BaseInitializer } from '@dyna/core'
 import { IncomingMessage, ServerResponse } from 'http'
 import { FixRoutesInitializer } from './fix-routes.initializer'
 import { CacheControllersInitializer } from './cache-controllers.initializer'
+import { Response } from './../response/response'
 
 /**
  * Listen HTTP Requests
@@ -38,11 +39,11 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         // Execute action
         const result = await method()
 
-        // Show result
-        res.write(result)
-        res.end()
+        // Parse result
+        const parsed = this.parseToResponse(result)
 
-        return
+        // Show response
+        return this.showResponse(req, res, parsed)
       }
 
       res.write('404!')
@@ -50,6 +51,24 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
 
       return
     })
+  }
+
+  showResponse(req: IncomingMessage, res: ServerResponse, response: Response) {
+    // Set headers
+    res.setHeader('Content-Type', response.getContentType())
+
+    // Write to client
+    res.write(response.getContent())
+
+    // End connection
+    res.end()
+  }
+  parseToResponse(result: any): Response {
+    if (!(result instanceof Response)) {
+      return new Response().content(result)
+    }
+
+    return result
   }
 
   static getInitializerIndex(): number {
