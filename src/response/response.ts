@@ -33,10 +33,13 @@ export class Response {
       case 'number':
       case 'bigint':
       case 'boolean':
-      case 'undefined':
       case 'function':
       case 'object': {
         this.json(content)
+        break
+      }
+      case 'undefined': {
+        this.text('')
         break
       }
     }

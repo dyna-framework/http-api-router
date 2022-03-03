@@ -7,6 +7,7 @@ import { Response } from './../response/response'
 import { ParameterDecorator } from 'ts-ext-decorators'
 import { HttpError404 } from '../http-errors/404.http-error'
 import { HttpError } from '../http-errors/base.http-error'
+import { HttpError500 } from '../http-errors/500.http-error'
 
 /**
  * Action parameters
@@ -70,10 +71,11 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         // Route not found
         throw new HttpError404()
       } catch (err) {
-        // Http Error
-        if (err instanceof HttpError) {
-          return this.showResponse(req, res, new Response().status(err.statusCode).content(err.statusText))
-        }
+        // HTTP error
+        const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any);
+
+        // Show response error
+        return this.showResponse(req, res, new Response().status(error.statusCode).content(error.statusText))
       }
     })
   }
