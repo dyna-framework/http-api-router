@@ -8,6 +8,7 @@ import { ParameterDecorator } from 'ts-ext-decorators'
 import { HttpError404 } from '../http-errors/404.http-error'
 import { HttpError } from '../http-errors/base.http-error'
 import { HttpError500 } from '../http-errors/500.http-error'
+import { ErrorHandler } from '../error-handler/error-handler'
 
 /**
  * Action parameters
@@ -74,9 +75,17 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         // HTTP error
         const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any)
 
-        // Show response error
-        console.error(error)
-        return this.showResponse(req, res, new Response().status(error.statusCode).content(error.statusText))
+        // Error handler response
+        const errorHandlerResponse = (this.app?.ex.httpErrorHandler as ErrorHandler)?.getResponse();
+
+        // Has error handler
+        if (errorHandlerResponse instanceof Response) {
+          return this.showResponse(req, res, errorHandlerResponse)
+        } else {
+          // Show response error
+          console.error(error)
+          return this.showResponse(req, res, new Response().status(error.statusCode).content(error.statusText))
+        }
       }
     })
   }
