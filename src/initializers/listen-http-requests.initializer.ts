@@ -11,7 +11,13 @@ import { ParameterDecorator } from 'ts-ext-decorators'
 export interface ActionParameters {
   req: IncomingMessage
   res: ServerResponse
+  ex: ExtraParameters
 }
+
+/**
+ * Extra parameters
+ */
+export interface ExtraParameters {}
 
 /**
  * Listen HTTP Requests
@@ -34,20 +40,20 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
 
       // All controllers
       for (const controller of CacheControllersInitializer.controllers) {
-        const action = controller.getAction(req.method, req.url)
+        const route = controller.getRoute(req.method, req.url)
 
         // No match
-        if (!action) {
+        if (!route) {
           continue
         }
 
         // Instance controller
         const instance = new controller()
-        const realAction = ParameterDecorator.method(instance, action)
-        const method = (instance as any)[realAction].bind(instance)
+        const action = ParameterDecorator.method(instance, route.action)
+        const method = (instance as any)[action].bind(instance)
 
         // Execute action
-        const result = await method(<ActionParameters>{ req, res })
+        const result = await method(<ActionParameters>{ req, res, route, ex: {} })
 
         // Parse result
         const parsed = this.parseToResponse(result)

@@ -26,7 +26,7 @@ export class BaseApiController extends BaseResource {
    * @param url path url
    * @returns an action name or null if not match
    */
-  static getAction(method: string, url: string): string | null {
+  static getRoute(method: string, url: string): Route | null {
     url = urlResolve(url || '')
 
     // All controller routes
@@ -44,7 +44,7 @@ export class BaseApiController extends BaseResource {
       }
 
       // Match route
-      return route.action
+      return route
     }
 
     return null
