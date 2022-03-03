@@ -5,6 +5,8 @@ import { CacheControllersInitializer } from './cache-controllers.initializer'
 import { Route } from './../api-controller/base.api-controller'
 import { Response } from './../response/response'
 import { ParameterDecorator } from 'ts-ext-decorators'
+import { HttpError404 } from '../http-errors/404.http-error'
+import { HttpError } from '../http-errors/base.http-error'
 
 /**
  * Action parameters
@@ -40,34 +42,39 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         return res.end()
       }
 
-      // All controllers
-      for (const controller of CacheControllersInitializer.controllers) {
-        const route = controller.getRoute(req.method, req.url)
+      try {
+        // All controllers
+        for (const controller of CacheControllersInitializer.controllers) {
+          const route = controller.getRoute(req.method, req.url)
 
-        // No match
-        if (!route) {
-          continue
+          // No match
+          if (!route) {
+            continue
+          }
+
+          // Instance controller
+          const instance = new controller()
+          const action = ParameterDecorator.method(instance, route.action)
+          const method: (data: ActionParameters) => any = (instance as any)[action].bind(instance)
+
+          // Execute action
+          const result = await method({ req, res, route, ex: {} })
+
+          // Parse result
+          const parsed = this.parseToResponse(result)
+
+          // Show response
+          return this.showResponse(req, res, parsed)
         }
 
-        // Instance controller
-        const instance = new controller()
-        const action = ParameterDecorator.method(instance, route.action)
-        const method: (data: ActionParameters) => any = (instance as any)[action].bind(instance)
-
-        // Execute action
-        const result = await method({ req, res, route, ex: {} })
-
-        // Parse result
-        const parsed = this.parseToResponse(result)
-
-        // Show response
-        return this.showResponse(req, res, parsed)
+        // Route not found
+        throw new HttpError404()
+      } catch (err) {
+        // Http Error
+        if (err instanceof HttpError) {
+          return this.showResponse(req, res, new Response().status(err.statusCode).content(err.statusText))
+        }
       }
-
-      res.write('404!')
-      res.end()
-
-      return
     })
   }
 
