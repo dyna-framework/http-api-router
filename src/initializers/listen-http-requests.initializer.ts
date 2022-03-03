@@ -3,6 +3,15 @@ import { IncomingMessage, ServerResponse } from 'http'
 import { FixRoutesInitializer } from './fix-routes.initializer'
 import { CacheControllersInitializer } from './cache-controllers.initializer'
 import { Response } from './../response/response'
+import { ParameterDecorator } from 'ts-ext-decorators'
+
+/**
+ * Action parameters
+ */
+export interface ActionParameters {
+  req: IncomingMessage
+  res: ServerResponse
+}
 
 /**
  * Listen HTTP Requests
@@ -34,10 +43,11 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
 
         // Instance controller
         const instance = new controller()
-        const method = ((instance as any)[action]).bind(instance)
+        const realAction = ParameterDecorator.method(instance, action)
+        const method = (instance as any)[realAction].bind(instance)
 
         // Execute action
-        const result = await method({ req, res })
+        const result = await method(<ActionParameters>{ req, res })
 
         // Parse result
         const parsed = this.parseToResponse(result)

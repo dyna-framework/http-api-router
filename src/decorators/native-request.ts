@@ -1,5 +1,10 @@
+import { ParameterDecorator } from 'ts-ext-decorators'
+import { ActionParameters } from './../initializers/listen-http-requests.initializer'
+
 export function NativeRequest() {
   return (target: any, propertyKey: string, parameterIndex: number) => {
-    console.log('target', propertyKey)
+    ParameterDecorator.create_prototype(target, propertyKey, parameterIndex, (data: ActionParameters) => {
+      return data.req
+    })
   }
 }
