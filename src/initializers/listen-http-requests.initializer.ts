@@ -76,7 +76,7 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any)
 
         // Error handler response
-        const errorHandlerResponse = (this.app?.ex.httpErrorHandler as ErrorHandler)?.getResponse();
+        const errorHandlerResponse = (this.app?.ex.httpRouterErrorHandler as ErrorHandler)?.getResponse();
 
         // Has error handler
         if (errorHandlerResponse instanceof Response) {

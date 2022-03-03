@@ -7,7 +7,7 @@ import { ErrorHandler } from '../error-handler/error-handler'
 export class HttpErrorHandler extends BaseInitializer {
   async register(): Promise<void> {
     if (this.app) {
-      (this.app.ex.httpErrorHandler as ErrorHandler) = new ErrorHandler()
+      (this.app.ex.httpRouterErrorHandler as ErrorHandler) = new ErrorHandler()
     }
   }
 }
