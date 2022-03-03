@@ -13,9 +13,9 @@ export interface Route {
 }
 
 /**
- * Base API Controller
+ * Base HTTP Controller
  */
-export class BaseApiController extends BaseResource {
+export class BaseHttpController extends BaseResource {
   private static INTERNAL_BASE_PATH: string
   private static INTERNAL_MATCH_ROUTES: Route[]
   private static INTERNAL_CALLER: string
@@ -103,10 +103,10 @@ export class BaseApiController extends BaseResource {
   }
 
   /**
-   * Get resource type (api controller)
+   * Get resource type (http controller)
    * @returns resource type
    */
   static getResourceType(): string {
-    return '@dyna:api-controller'
+    return '@dyna:http-controller'
   }
 }

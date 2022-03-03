@@ -1,5 +1,5 @@
 import { ParameterDecorator } from 'ts-ext-decorators'
-import { ActionParameters } from './../initializers/listen-http-requests.initializer'
+import { ActionParameters } from '../initializers/listen-http-requests.initializer'
 
 /**
  * Native Request (IncomingMessage) decorator

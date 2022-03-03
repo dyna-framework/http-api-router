@@ -1,5 +1,5 @@
 {
-  "name": "@dyna/http-api-router",
+  "name": "@dyna/http-router",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

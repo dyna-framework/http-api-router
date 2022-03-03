@@ -1,4 +1,4 @@
-import { BaseApiController } from '../api-controller/base.api-controller'
+import { BaseHttpController } from '../http-controller/base.http-controller'
 
 /**
  * Methods
@@ -12,7 +12,7 @@ type AvailableMethods = 'GET' | 'get' | 'POST' | 'post' | 'PUT' | 'put' | 'PATCH
  */
 export function Method(method: AvailableMethods, path?: string | string[]) {
   return function (target: Object, key: string, descriptor: PropertyDescriptor) {
-    const controller: typeof BaseApiController = target.constructor as any
+    const controller: typeof BaseHttpController = target.constructor as any
     const paths = typeof path === 'string' ? [path] : path || [key]
 
     for (const p of paths) {
