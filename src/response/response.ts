@@ -6,7 +6,7 @@ export class Response {
    * Private data
    */
   private _content!: string
-  private _status!: number
+  private _status: number = 200
   private _contentType!: string
 
   getContent() {
@@ -57,6 +57,10 @@ export class Response {
   contentType(contentType: string) {
     this._contentType = contentType
     return this
+  }
+
+  getStatus() {
+    return this._status
   }
 
   status(status: number) {

@@ -57,12 +57,16 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
     // Set headers
     res.setHeader('Content-Type', response.getContentType())
 
+    // Set others
+    res.statusCode = response.getStatus()
+
     // Write to client
     res.write(response.getContent())
 
     // End connection
     res.end()
   }
+
   parseToResponse(result: any): Response {
     if (!(result instanceof Response)) {
       return new Response().content(result)
