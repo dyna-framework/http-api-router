@@ -2,6 +2,7 @@ import { BaseInitializer } from '@dyna/core'
 import { IncomingMessage, ServerResponse } from 'http'
 import { FixRoutesInitializer } from './fix-routes.initializer'
 import { CacheControllersInitializer } from './cache-controllers.initializer'
+import { Route } from './../api-controller/base.api-controller'
 import { Response } from './../response/response'
 import { ParameterDecorator } from 'ts-ext-decorators'
 
@@ -11,6 +12,7 @@ import { ParameterDecorator } from 'ts-ext-decorators'
 export interface ActionParameters {
   req: IncomingMessage
   res: ServerResponse
+  route: Route
   ex: ExtraParameters
 }
 
@@ -50,10 +52,10 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         // Instance controller
         const instance = new controller()
         const action = ParameterDecorator.method(instance, route.action)
-        const method = (instance as any)[action].bind(instance)
+        const method: (data: ActionParameters) => any = (instance as any)[action].bind(instance)
 
         // Execute action
-        const result = await method(<ActionParameters>{ req, res, route, ex: {} })
+        const result = await method({ req, res, route, ex: {} })
 
         // Parse result
         const parsed = this.parseToResponse(result)

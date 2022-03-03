@@ -5,7 +5,7 @@ import { urlResolve } from '../helpers'
 /**
  * Route data
  */
-interface Route {
+export interface Route {
   method: string
   action: string
   path: string
