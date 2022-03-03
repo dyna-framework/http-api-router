@@ -7,8 +7,6 @@ import * as path from 'path'
  * Fix controllers
  */
 export class FixControllersInitializer extends BaseInitializer {
-  static INTERNAL_INITIALIZER_INDEX: number = CacheControllersInitializer.INTERNAL_INITIALIZER_INDEX + 1
-
   async register(): Promise<void> {
     CacheControllersInitializer.controllers.forEach((controller) => {
       // Current controller base path
@@ -33,4 +31,8 @@ export class FixControllersInitializer extends BaseInitializer {
   }
 
   async boot(): Promise<void> {}
+
+  static getInitializerIndex(): number {
+    return CacheControllersInitializer.getInitializerIndex() + 1
+  }
 }

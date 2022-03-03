@@ -6,8 +6,6 @@ import { BaseApiController } from './../api-controller/base.api-controller'
  * Cache controllers
  */
 export class CacheControllersInitializer extends BaseInitializer {
-  static INTERNAL_INITIALIZER_INDEX: number = CreateHttpServerInitializer.INTERNAL_INITIALIZER_INDEX + 1
-
   /**
    * Controllers container
    */
@@ -15,7 +13,7 @@ export class CacheControllersInitializer extends BaseInitializer {
 
   async register(): Promise<void> {
     // Get all controllers
-    CacheControllersInitializer.controllers = this.app?.resources.only<typeof BaseApiController>(BaseApiController.INTERNAL_RESOURCE_TYPE) || []
+    CacheControllersInitializer.controllers = this.app?.resources.only<typeof BaseApiController>(BaseApiController.getResourceType()) || []
 
     // Is on application
     if (this.app) {
@@ -25,4 +23,8 @@ export class CacheControllersInitializer extends BaseInitializer {
   }
 
   async boot(): Promise<void> {}
+
+  static getInitializerIndex(): number {
+    return CreateHttpServerInitializer.getInitializerIndex() + 1
+  }
 }

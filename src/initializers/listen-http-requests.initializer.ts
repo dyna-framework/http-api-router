@@ -7,8 +7,6 @@ import { CacheControllersInitializer } from './cache-controllers.initializer'
  * Listen HTTP Requests
  */
 export class ListenHttpRequestsInitializer extends BaseInitializer {
-  static INTERNAL_INITIALIZER_INDEX: number = FixRoutesInitializer.INTERNAL_INITIALIZER_INDEX + 1
-
   async register(): Promise<void> {}
 
   async boot(): Promise<void> {
@@ -52,5 +50,9 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
 
       return
     })
+  }
+
+  static getInitializerIndex(): number {
+    return FixRoutesInitializer.getInitializerIndex() + 1
   }
 }

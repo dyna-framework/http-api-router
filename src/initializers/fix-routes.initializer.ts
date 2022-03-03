@@ -8,8 +8,6 @@ import UrlPattern from 'url-pattern'
  * Fix routes
  */
 export class FixRoutesInitializer extends BaseInitializer {
-  static INTERNAL_INITIALIZER_INDEX: number = FixControllersInitializer.INTERNAL_INITIALIZER_INDEX + 1
-
   async register(): Promise<void> {
     CacheControllersInitializer.controllers.forEach((controller) => {
       // Every route
@@ -26,4 +24,8 @@ export class FixRoutesInitializer extends BaseInitializer {
   }
 
   async boot(): Promise<void> {}
+
+  static getInitializerIndex(): number {
+    return FixControllersInitializer.getInitializerIndex() + 1
+  }
 }
