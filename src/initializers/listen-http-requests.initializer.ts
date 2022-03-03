@@ -34,10 +34,10 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
 
         // Instance controller
         const instance = new controller()
-        const method = (instance as any)[action]
+        const method = ((instance as any)[action]).bind(instance)
 
         // Execute action
-        const result = await method()
+        const result = await method({ req, res })
 
         // Parse result
         const parsed = this.parseToResponse(result)
