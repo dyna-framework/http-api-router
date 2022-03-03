@@ -1,5 +1,5 @@
-import { BaseApiController } from "./../api-controller/base.api-controller";
-import caller from 'caller';
+import { BaseApiController } from './../api-controller/base.api-controller'
+import caller from 'caller'
 
 /**
  * Controller decorator
@@ -8,9 +8,9 @@ import caller from 'caller';
 export function ApiController(path?: string) {
   return function (constructor: typeof BaseApiController) {
     if (path) {
-      constructor.setControllerPath(path);
+      constructor.setControllerPath(path)
     }
 
-    constructor.setControllerCaller(caller());
+    constructor.setControllerCaller(caller())
   }
 }

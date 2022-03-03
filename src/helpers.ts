@@ -4,8 +4,11 @@
  * @returns the uri (or url) fixed
  */
 export function urlResolve(uri: string = '') {
-  const path = `/${uri}`.split('/').filter(e => e.length).join('/');
-  const url = new URL(path, 'http://localhost');
+  const path = `/${uri}`
+    .split('/')
+    .filter((e) => e.length)
+    .join('/')
+  const url = new URL(path, 'http://localhost')
 
-  return url.pathname;
+  return url.pathname
 }
