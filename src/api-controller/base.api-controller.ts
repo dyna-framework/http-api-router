@@ -107,6 +107,6 @@ export class BaseApiController extends BaseResource {
    * @returns resource type
    */
   static getResourceType(): string {
-      return '@dyna:api-controller'
+    return '@dyna:api-controller'
   }
 }
