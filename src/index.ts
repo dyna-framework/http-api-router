@@ -8,6 +8,10 @@ export * from './decorators/native-response'
 
 export * from './http-controller/base.http-controller'
 
-export * from './response/response';
+export * from './http-errors/base.http-error'
+export * from './http-errors/404.http-error'
+export * from './http-errors/500.http-error'
+
+export * from './response/response'
 
 export * from './error-handler/error-handler'
