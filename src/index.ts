@@ -9,3 +9,5 @@ export * from './decorators/native-response'
 export * from './http-controller/base.http-controller'
 
 export * from './response/response';
+
+export * from './error-handler/error-handler'
