@@ -76,7 +76,7 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
         const error: HttpError = err instanceof HttpError ? err : new HttpError500(err as any)
 
         // Error handler response
-        const errorHandlerResponse = (this.app?.ex.httpRouterErrorHandler as ErrorHandler)?.getResponse();
+        const errorHandlerResponse = (this.app?.ex.httpRouterErrorHandler as ErrorHandler)?.getResponse(error, req, res)
 
         // Has error handler
         if (errorHandlerResponse instanceof Response) {
@@ -90,6 +90,12 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
     })
   }
 
+  /**
+   * Show a response to client
+   * @param req native request
+   * @param res native response
+   * @param response Response to send
+   */
   showResponse(req: IncomingMessage, res: ServerResponse, response: Response) {
     // Set headers
     res.setHeader('Content-Type', response.getContentType())
@@ -104,6 +110,11 @@ export class ListenHttpRequestsInitializer extends BaseInitializer {
     res.end()
   }
 
+  /**
+   * Parse value (string, json, etc) to a valid Response
+   * @param result value to parse
+   * @returns valid Response
+   */
   parseToResponse(result: any): Response {
     if (!(result instanceof Response)) {
       return new Response().content(result)
