@@ -22,7 +22,9 @@ export class CacheControllersInitializer extends BaseInitializer {
     }
   }
 
-  async boot(): Promise<void> {}
+  async boot(): Promise<void> {
+    CacheControllersInitializer.controllers.forEach(controller => controller.getRoutes())
+  }
 
   static getInitializerIndex(): number {
     return CreateHttpServerInitializer.getInitializerIndex() + 1

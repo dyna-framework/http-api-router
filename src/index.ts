@@ -5,6 +5,7 @@ export * from './decorators/http-controller'
 export * from './decorators/http-methods'
 export * from './decorators/native-request'
 export * from './decorators/native-response'
+export * from './decorators/input'
 
 export * from './http-controller/base.http-controller'
 
